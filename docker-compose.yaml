@@ -1,0 +1,36 @@
+services:  
+  
+  req_db:
+    container_name: db
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: "request"
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./migrations/:/docker-entrypoint-initdb.d/
+    ports:
+      - "8055:5432"
+
+  proxy_api:
+    container_name: api
+    image: proxy-api
+    restart: on-failure
+    depends_on:
+      - req_db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8000:8000"
+
+  https_proxy:
+    container_name: proxy
+    image: https-proxy
+    restart: on-failure
+    depends_on:
+      - req_db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8080:8080"

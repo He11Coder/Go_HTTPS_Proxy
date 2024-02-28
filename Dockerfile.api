@@ -1,0 +1,26 @@
+FROM golang:1.21.4-alpine
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+RUN mkdir api && mkdir repository && mkdir scanner
+
+COPY api/dicc.txt api/dicc.txt
+COPY api/proxyAPI.go api/proxyAPI.go
+
+COPY repository/db_connect.go repository/db_connect.go
+COPY repository/request.go repository/request.go
+COPY repository/requestUtils.go repository/requestUtils.go
+COPY repository/response.go repository/response.go
+COPY repository/responseUtils.go repository/responseUtils.go
+
+COPY scanner/dirbuster.go scanner/dirbuster.go
+
+EXPOSE 8000
+
+RUN cd api && CGO_ENABLED=0 GOOS=linux go build -o /proxyapi
+
+CMD [ "/proxyapi" ]

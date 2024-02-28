@@ -1,0 +1,29 @@
+FROM golang:1.21.4-alpine
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+RUN mkdir repository
+
+COPY repository/db_connect.go repository/db_connect.go
+COPY repository/request.go repository/request.go
+COPY repository/requestUtils.go repository/requestUtils.go
+COPY repository/response.go repository/response.go
+COPY repository/responseUtils.go repository/responseUtils.go 
+
+COPY cert_gen.sh cert_gen.sh
+
+COPY ca.crt ca.crt
+COPY ca.key ca.key
+COPY cert.key cert.key
+
+COPY https_proxy.go https_proxy.go
+
+EXPOSE 8080
+
+RUN CGO_ENABLED=0 GOOS=linux go build -o /httpsproxy
+
+CMD [ "/httpsproxy" ]
