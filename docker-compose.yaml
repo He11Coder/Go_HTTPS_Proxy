@@ -16,7 +16,7 @@ services:
   proxy_api:
     container_name: api
     image: proxy-api
-    restart: on-failure
+    restart: always
     depends_on:
       - req_db
     extra_hosts:
@@ -27,7 +27,7 @@ services:
   https_proxy:
     container_name: proxy
     image: https-proxy
-    restart: on-failure
+    restart: always
     depends_on:
       - req_db
     extra_hosts:

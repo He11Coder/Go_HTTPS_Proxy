@@ -8,6 +8,7 @@ create-cert:
 add-cert-as-trusted: ca.crt
 	sudo cp ca.crt /usr/local/share/ca-certificates/
 	sudo update-ca-certificates -v
+	openssl verify ca.crt
 
 .PHONY: docker-build
 docker-build:
